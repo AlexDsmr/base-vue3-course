@@ -33,7 +33,7 @@ export default {
     methods: {
         createPost() {
             this.post.id = Date.now();
-            this.$emit('create', this.post, 'second param', '3rd pararm')
+            this.$emit('create', this.post)
             this.post = {
                 title: '',
                 body: ''
