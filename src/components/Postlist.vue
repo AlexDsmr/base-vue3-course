@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-show="posts.length > 0">
         <h3>Список статей</h3>
         <post-item
         v-for="post in posts"
@@ -8,6 +8,9 @@
         @remove="$emit('remove',post)"
         />
     </div>
+    <h2 v-show="posts.length === 0" style="color:red">
+        Список статей пуст
+    </h2>
 
 </template>
 
