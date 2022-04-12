@@ -2,11 +2,6 @@
     <div class="app">
     <h1>Страница с постами</h1>
         <my-button
-        @click="fetchPosts"
-        >
-        Получить посты
-        </my-button>
-        <my-button
         @click="showDialog"
         style="margin: 15px 0"
         >
@@ -20,7 +15,9 @@
         <post-list 
         :posts="posts"
         @remove="removePost"
+        v-if="!isPostsLoading"
         />
+        <div v-else>Идёт загрузка...</div>
     </div>
 </template>
 
@@ -36,6 +33,7 @@ export default {
         return{
             posts: [],
             dialogvisible: false,
+            isPostsLoading: false
         }
     },
     methods: {
@@ -51,13 +49,21 @@ export default {
         },
         async fetchPosts() {
             try {
-                const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
-                this.posts = response.data;
+                this.isPostsLoading = true;
+                setTimeout(async() => {
+                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+                    this.posts = response.data;
+                    this.isPostsLoading = false;
+                }, 1000)
             } catch (e) {
                 alert('Ошибка')
+            } finally {
+                // this.isPostsLoading = false; // по правильному здесь
             }
-
         }
+    },
+    mounted() { //Хук, доступный после внедрение компонента
+        this.fetchPosts();
     }
 }
 </script>
