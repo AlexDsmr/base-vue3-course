@@ -71,8 +71,20 @@ export default {
             }
         }
     },
-    mounted() { //Хук, доступный после внедрение компонента
+    mounted() { //Хук, доступный после внедрения компонента
         this.fetchPosts();
+    },
+    watch: {
+        selectedSort(newValue) {
+            this.posts.sort((post1, post2) => {
+                if (newValue === 'id') {
+                    return post1[this.selectedSort]>post2[this.selectedSort]?1:-1
+                } else {
+                    return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])  
+                }
+            })
+        },
+        
     }
 }
 </script>
