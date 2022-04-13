@@ -1,7 +1,10 @@
 <template>
     <form @submit.prevent>
         <h4>Создание поста</h4>
-        <my-input v-model="post.title" type="text" placeholder="Название"></my-input>
+        <my-input
+        v-model="post.title"
+        type="text"
+        placeholder="Название"></my-input>
         <my-input
         v-model="post.body"
         type="text" 
@@ -35,8 +38,18 @@ export default {
                 title: '',
                 body: ''
             }
-        },
-    }
+        }
+    },
+    // Пример глубокого отслеживания
+    //watch: {
+    //    post: {
+    //        handler(newVal) {
+    //            console.log(newVal)
+    //        },
+    //        deep: true
+    //    }
+    //}
+    
 }
 </script>
 
