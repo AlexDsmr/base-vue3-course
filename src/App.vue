@@ -81,7 +81,6 @@ export default {
         },
         changePage(pageNumber){
             this.page = pageNumber;
-            this.fetchPosts()
         },
         async fetchPosts() {
             try {
@@ -121,6 +120,10 @@ export default {
 
     },
     watch: {
+        page() {
+            this.fetchPosts()
+        }
+        
         //selectedSort(newValue) {
         //    this.posts.sort((post1, post2) => {
         //        if (newValue === 'id') {
