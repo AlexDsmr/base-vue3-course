@@ -1,9 +1,11 @@
 <template>
     <div>
-    <h1>Страница с постами</h1>
+
+<h1>Страница с постами</h1>
     <my-input
         v-focus
-        v-model="searchQuery"
+        :model-value="searchQuery"
+        @update:model-value="setSearchQuery"
         placeholder="Поиск..."
     />
         <div class="app__btns">
@@ -13,7 +15,8 @@
             Создать пост
             </my-button>
             <my-select
-                v-model="selectedSort"
+                :model-value="selectedSort"
+                @update:model-value="setSelectedSort"
                 :options="sortOptions"
             />
         </div>
@@ -29,6 +32,7 @@
         />
         <div v-else>Идёт загрузка...</div>
         <div v-intersection="loadMorePosts" class="observer"></div>
+
 <!--
         <div class="page__wrapper">
             <div
@@ -55,6 +59,7 @@ import MyButton from "@/components/UI/MyButton";
 import MySelect from "@/components/UI/MySelect";
 import MyInput from "@/components/UI/MyInput";
 import MyDialog from "@/components/UI/MyDialog";
+import {mapState, mapGetters, mapActions, mapMutations} from 'vuex'
 
 export default {
     components:{
@@ -67,22 +72,19 @@ export default {
     },
     data(){
         return{
-            posts: [],
             dialogvisible: false,
-            isPostsLoading: false,
-            selectedSort: '',
-            searchQuery: '',
-            page: 1,
-            limit: 10,
-            totalPages: 0,
-            sortOptions: [
-                {value: 'title', name: 'По названию'},
-                {value: 'body', name: 'По содержимому'},
-                {value: 'id', name: 'По ID'}
-            ]
         }
     },
     methods: {
+        ...mapMutations({
+            setPage: 'post/setPage',
+            setSearchQuery: 'post/setSearchQuery',
+            setSelectedSort: 'post/setSelectedSort',
+        }),
+        ...mapActions({
+            loadMorePosts: 'post/loadMorePosts',
+            fetchPosts: 'post/fetchPosts'
+        }),
         createPost(post) {
             this.posts.push(post);
             this.dialogvisible = false;
@@ -92,74 +94,26 @@ export default {
         },
         showDialog() {
             this.dialogvisible = true;
-        },
-//        changePage(pageNumber){
-//            this.page = pageNumber;
-//        },
-        async fetchPosts() {
-            try {
-                this.isPostsLoading = true;
-                const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-                    params: {
-                        _page: this.page,
-                        _limit: this.limit
-                    }
-                });
-                this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
-                this.posts = response.data;
-                this.isPostsLoading = false;
-            } catch (e) {
-                alert('Ошибка')
-            } finally {
-                this.isPostsLoading = false; 
-            }
-        },
-
-        async loadMorePosts() {
-            try {
-                this.page += 1;
-                const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-                    params: {
-                        _page: this.page,
-                        _limit: this.limit
-                    }
-                });
-                this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
-                this.posts = [...this.posts, ...response.data]
-            } catch (e) {
-                alert('Ошибка')
-            }
-        }
+        },        
     },
-    mounted() { //Хук, доступный после внедрения компонента
+    mounted() {
         this.fetchPosts();
-//        const options = {
-//            rootMargin: '0px',
-//            threshold: 1.0
-//        }
-//        const callback = (entries, observer) => {
-//        /* Content excerpted, show below */
-//            if (entries[0].isIntersecting && this.page < this.totalPages) {
-//                this.loadMorePosts()
-//            }
-//        };
-//        const observer = new IntersectionObserver(callback, options);
-//        observer.observe(this.$refs.observer);
     },
     computed: {
-        sortedPosts() {
-            return [...this.posts].sort((post1, post2) => {
-                if (this.selectedSort  === 'id') {
-                    return post1[this.selectedSort]>post2[this.selectedSort]?1:-1
-                } else {
-                    return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])  
-                }
-            })
-        },
-        sortedAndSearchedPosts() {
-            return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
-        }
-
+        ...mapState({
+            posts: state => state.post.posts,
+            isPostsLoading: state => state.post.isPostsLoading,
+            selectedSort: state => state.post.selectedSort,
+            searchQuery: state => state.post.searchQuery,
+            page: state => state.post.page,
+            limit: state => state.post.limit,
+            totalPages: state => state.post.totalPages,
+            sortOptions: state => state.post.sortOptions
+        }),
+        ...mapGetters ({
+            sortedPosts: 'post/sertedPostes',
+            sortedAndSearchedPosts: 'post/sortedAndSearchedPosts'
+        })
     },
     watch: {
 //        page() {
