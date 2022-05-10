@@ -1,16 +1,15 @@
 <template>
     <div>
     <h1>Страница с постами</h1>
-    <my-button @click="addLike">Добавть лайк</my-button>
-    <h1>{{likes}}</h1>
-    <!-- <my-input
+
+    <my-input
         v-focus
         v-model="searchQuery"
         placeholder="Поиск..."
     />
         <div class="app__btns">
             <my-button
-                @click="showDialog"
+
             >
             Создать пост
             </my-button>
@@ -21,16 +20,14 @@
         </div>
         <my-dialog v-model:show="dialogvisible">
            <PostForm
-                @create="createPost"
             />
         </my-dialog>
         <post-list 
         :posts="sortedAndSearchedPosts"
-        @remove="removePost"
         v-if="!isPostsLoading"
         />
         <div v-else>Идёт загрузка...</div>
-        <div v-intersection="loadMorePosts" class="observer"></div> -->
+
     </div>
 </template>
 
@@ -42,7 +39,10 @@ import MyButton from "@/components/UI/MyButton";
 import MySelect from "@/components/UI/MySelect";
 import MyInput from "@/components/UI/MyInput";
 import MyDialog from "@/components/UI/MyDialog";
-import {ref} from 'vue'
+import {ref} from 'vue';
+import {usePosts} from "@/components/hooks/usePosts";
+import useSortedPosts from "@/components/hooks/useSortedPosts";
+import useSortedAndSearchedPosts from "@/components/hooks/useSortedAndSearchedPosts";
 
 export default {
     components:{
@@ -64,15 +64,18 @@ export default {
         }
     },
     setup(props){
-        const likes = ref(2)
-        console.log(likes)
-        const addLike = () => {
-            likes.value += 1
-        }
+        const {posts, totalPages, isPostsLoading} = usePosts(10);
+        const {sortedPosts, selectedSort} = useSortedPosts(posts);
+        const {searchQuery, sortedAndSearchedPosts} = useSortedAndSearchedPosts(sortedPosts)
 
         return {
-            likes,
-            addLike
+            posts,
+            totalPages,
+            isPostsLoading,
+            sortedPosts,
+            selectedSort,
+            searchQuery,
+            sortedAndSearchedPosts
         }
     }
 }
