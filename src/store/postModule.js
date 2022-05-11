@@ -53,6 +53,7 @@ export const postModule = {
     actions: {
         async fetchPosts({state, commit}) {
             try {
+                commit('setPage', state.page = 1)
                 commit('setLoading', true);
                 const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
                     params: {

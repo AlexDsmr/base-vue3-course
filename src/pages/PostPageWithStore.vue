@@ -111,7 +111,7 @@ export default {
             sortOptions: state => state.post.sortOptions
         }),
         ...mapGetters ({
-            sortedPosts: 'post/sertedPostes',
+            sortedPosts: 'post/sortedPosts',
             sortedAndSearchedPosts: 'post/sortedAndSearchedPosts'
         })
     },
