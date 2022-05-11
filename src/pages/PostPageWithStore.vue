@@ -83,15 +83,14 @@ export default {
         }),
         ...mapActions({
             loadMorePosts: 'post/loadMorePosts',
-            fetchPosts: 'post/fetchPosts'
+            fetchPosts: 'post/fetchPosts',
+            removePost: 'post/removePost',
         }),
         createPost(post) {
             this.posts.push(post);
             this.dialogvisible = false;
         },
-        removePost(post) {
-            this.posts = this.posts.filter(p => p.id !== post.id)
-        },
+        
         showDialog() {
             this.dialogvisible = true;
         },        

@@ -84,7 +84,11 @@ export const postModule = {
             } catch (e) {
                 console.log(e)
             }
-        }
+        },
+        
+        removePost({state, commit}, post) {
+            commit('setPosts', state.posts.filter(p => p.id !== post.id))
+        },
     },
     namespaced: true
 }
